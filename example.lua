@@ -1,7 +1,6 @@
 
 local unify = require("lunify")
 local var = unify.var
-local inspect = require("inspect")
 
 local a = {
     var("x"),
