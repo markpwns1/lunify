@@ -21,7 +21,7 @@ local b = {
 }
 
 local success, result = unify(a, b)
-success, result = unify.combine(result, { p = 5 })
+
 if success then 
     for k, v in pairs(result) do 
         print(k .. " := " .. tostring(v))

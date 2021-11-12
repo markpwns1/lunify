@@ -34,6 +34,7 @@ Prints the following:
 y := 3
 x := 1
 z := 2
+w := p
 
 ]]
 ```
@@ -59,6 +60,6 @@ z := x
 - `var(name: string): Var` - a constructor for the `Var` type, which represents a unification variable. It takes in a string representing the variable's name. Any two variables with the same name are considered equal.
 - `_` - simply equivalent to `var("_")`. Variables with the name "_" will be ignored during unification.
 - `replace(value: T, replacements: Replacements): T` - given a value and a set of replacements, returns the given value with the replacements applied. Tables will not be modified, but instead the function returns a deep-copy with metatables preserved.
-- `combine(a: Replacements, b: Replacements): bool, Replacements` - given two sets of replacements, attempts to combine them, returning a `true` if successful, and returning the combined set of replacements. An example where combination would not be successful is if two variables had conflicting values. Again, if the operation was not successful, then the table returned is not well-defined.
+- `combine(a: Replacements, b: Replacements): bool, Replacements` - given two sets of replacements, attempts to combine them, returning `true` if successful, and returning the combined set of replacements. An example where combination would not be successful is if two variables had conflicting values. Again, if the operation was not successful, then the table returned is not well-defined. Note that you can artifically substitute variables by simply creating a table of replacements yourself, like `unify.combine(r, { a = 1, b = 2 })`.
 
 
