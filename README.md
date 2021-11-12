@@ -9,14 +9,18 @@ local a = {
     var("x"),
     a = var("y"),
     b = { var("x"), 2, var("y") },
-    c = { var("_"), var("_"), 3}
+    c = { var("_"), var("_"), 3},
+    var("w"),
+    var("p")
 }
 
 local b = {
     var("x"),
     a = 3,
     b = { var("x"), var("z"), 3 },
-    c = { 1, var("x"), 3 }
+    c = { 1, var("x"), 3 },
+    var("p"),
+    var("w")
 }
 
 local success, result = unify(a, b)
