@@ -76,7 +76,9 @@ local function resolve(r)
 
     local a = {}
     for i, v in ipairs(r) do
-        a[v.from.name] = v.to
+        if v.from ~= v.to then 
+            a[v.from.name] = v.to
+        end
     end
     a["_"] = nil
 
@@ -88,7 +90,22 @@ local function unify(a, b, c, ...)
     return resolve(get_replacements(a, b))
 end
 
+local function apply(t, r)
+    if is_var(t) then 
+        return r[t.name] or t
+    elseif type(t) == "table" then 
+        local t0 = setmetatable({}, getmetatable(t))
+        for k, v in pairs(t) do 
+            t0[k] = apply(v, r)
+        end
+        return t0
+    else 
+        return t
+    end
+end
+
 return setmetatable({
+    replace = apply,
     var = var,
     _ = var("_")
 }, {
