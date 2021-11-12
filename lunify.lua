@@ -104,9 +104,23 @@ local function apply(t, r)
     end
 end
 
+local function table_to_replacements(t)
+    local r = {}
+    for k, v in pairs(t) do 
+        r[#r+1] = { from = var(k), to = v }
+    end
+    return r
+end
+
+local function combine_environments(a, b)
+    return resolve(concat(table_to_replacements(a), table_to_replacements(b)))
+end
+
 return setmetatable({
     replace = apply,
+    is_var = is_var,
     var = var,
+    combine = combine_environments,
     _ = var("_")
 }, {
     __call = function(_, ...) return unify(...) end
