@@ -1,3 +1,4 @@
+local inspect = require("inspect")
 
 local var_mt = { 
     __tostring = function(self) return self.name end,
@@ -8,8 +9,21 @@ local function var(name)
     return setmetatable({ name = name }, var_mt)
 end
 
+local function tail(name)
+    return setmetatable({ name = name, tail = true }, var_mt)
+end
+
 local function is_var(v)
     return getmetatable(v) == var_mt
+end
+
+local function is_tail(v)
+    return getmetatable(v) == var_mt and v.tail
+end
+
+local function get_tail(a)
+    local last_index = #a
+    return (last_index > 0 and is_tail(a[last_index])), last_index
 end
 
 local function concat(a, b)
@@ -23,11 +37,14 @@ local function compatible(a, b)
     elseif type(a) ~= type(b) then 
         return false
     elseif type(a) == "table" then
+        local has_tail, last_index = get_tail(a)
         for k, v in pairs(a) do
             if not compatible(v, b[k]) then return false end 
         end
-        for k, v in pairs(b) do 
-            if not compatible(v, a[k]) then return false end 
+        if not has_tail then
+            for k, v in pairs(b) do 
+                if not compatible(v, a[k]) then return false end 
+            end
         end
         return true
     else
@@ -45,12 +62,22 @@ local function get_replacements(a, b)
     elseif is_var(b) then
         return { { from = b, to = a } }, true
     elseif type(a) == "table" then 
+        local has_tail, last_index = get_tail(a)
+
         local replacements = {}
         local success = true
         for k, v in pairs(a) do 
-            local r, s = get_replacements(v, b[k])
-            if not s then success = false end
-            concat(replacements, r)
+            if has_tail and last_index == k then
+                local tbl = {}
+                for i = last_index, #b do
+                    tbl[#tbl+1] = b[i]
+                end
+                concat(replacements, { { from = a[last_index], to = tbl } })
+            else
+                local r, s = get_replacements(v, b[k])
+                if not s then success = false end
+                concat(replacements, r)
+            end
         end
         return replacements, success
     else 
@@ -96,7 +123,14 @@ local function apply(t, r)
     elseif type(t) == "table" then 
         local t0 = setmetatable({}, getmetatable(t))
         for k, v in pairs(t) do 
-            t0[k] = apply(v, r)
+            if is_tail(v) then 
+                local tbl = apply(v, r)
+                for i, w in ipairs(tbl) do 
+                  t0[k+i-1] = w
+                end
+            else
+                t0[k] = apply(v, r)
+            end
         end
         return t0
     else 
@@ -120,6 +154,7 @@ return setmetatable({
     replace = apply,
     is_var = is_var,
     var = var,
+    tail = tail,
     combine = combine_environments,
     _ = var("_")
 }, {
