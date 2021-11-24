@@ -36,7 +36,7 @@ end
 Prints the following:
 a := hello world
 b := 2
-c := table: 0x5626f8c691f0 (which is {3,4,5,6})
+rest := table: 0x5626f8c691f0 (which is {3,4,5,6})
 
 ]]
 
