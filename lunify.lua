@@ -1,4 +1,3 @@
-local inspect = require("inspect")
 
 local var_mt = { 
     __tostring = function(self) return self.name end,
