@@ -28,7 +28,7 @@ local success, result = unify(a, b)
 
 if success then 
     for k, v in pairs(result) do 
-        print(k .. " := " .. inspect(v))
+        print(k .. " := " .. tostring(v))
     end
 else
     print("Failed to unify")
