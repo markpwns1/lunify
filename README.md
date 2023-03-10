@@ -7,14 +7,17 @@ local unify = require("lunify")
 local var = unify.var
 local tail = unify.tail
 
-local a = { var("a"), var("b"), 
+local a = { 
+  var("a"), var("b"), 
   x = {
     z = var("a")
   }, 
   y = var("rest"),
-  tail("rest") }
+  tail("rest") 
+}
 
-local b = { "hello world", 2, 3, 4, 5, 6, 
+local b = { 
+  "hello world", 2, 3, 4, 5, 6, 
   x = {
     z = "hello world",
   },
